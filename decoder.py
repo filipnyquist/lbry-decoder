@@ -33,5 +33,15 @@ def api_decode(txid, nout):
         decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
         return json.dumps(decoded.claim_dict)
 
+@app.route('/claim_decode/<claimid>')
+def api_decodebyclaim(claimid):
+    connection_string = get_lbrycrdd_connection_details()
+    rpc = AuthServiceProxy(connection_string)
+    claim = rpc.getvalueforname(claimid)
+    if claim:
+        converted = "".join([chr(ord(i)) for i in claim['value']])
+        decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
+        return json.dumps(decoded.claim_dict)
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1')
