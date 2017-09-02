@@ -18,11 +18,21 @@ def internal_error(error):
 
     return 'error when decoding claims'
 
-@app.route('/getclaimbyid/<claimid>')
+@app.route('/claim_decode_id/<claimid>')
+def api_decode(claimid):
+    connection_string = get_lbrycrdd_connection_details()
+    rpc = AuthServiceProxy(connection_string)
+    claim = rpc.getclaimbyid(txid)
+    if claim:
+        converted = "".join([chr(ord(i)) for i in claim['value']])
+        decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
+        return json.dumps(decoded.claim_dict)
+
+@app.route('/claim_decode/<claimid>')
 def api_decodebyclaim(claimid):
     connection_string = get_lbrycrdd_connection_details()
     rpc = AuthServiceProxy(connection_string)
-    claim = rpc.getclaimbyid(claimid)
+    claim = rpc.getvalueforname(claimid)
     if claim:
         converted = "".join([chr(ord(i)) for i in claim['value']])
         decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
