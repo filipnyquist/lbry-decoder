@@ -22,7 +22,7 @@ def internal_error(error):
 def api_decode(claimid):
     connection_string = get_lbrycrdd_connection_details()
     rpc = AuthServiceProxy(connection_string)
-    claim = rpc.getclaimbyid(txid)
+    claim = rpc.getclaimbyid(claimid)
     if claim:
         converted = "".join([chr(ord(i)) for i in claim['value']])
         decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
