@@ -26,7 +26,8 @@ def api_decode(claimid):
     if claim:
         converted = "".join([chr(ord(i)) for i in claim['value']])
         decoded = smart_decode(converted) # Decode the claims and dump them back to logstash plugin
-        return json.dumps(decoded.claim_dict)
+        claim['value'] = decoded.claim_dict
+        return json.dumps(claim)
 
 @app.route('/claim_decode/<claimid>')
 def api_decodebyclaim(claimid):
